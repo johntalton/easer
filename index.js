@@ -87,7 +87,7 @@ class Easer {
     });
 
     if(Easer.easments.length === 0) {
-      console.log('empty, stop timer');
+      //console.log('empty, stop timer');
       clearInterval(Easer.timer);
       Easer.timer = undefined;
     }
@@ -102,7 +102,7 @@ class Easer {
       const target = ease.from + Math.round(range * ratio);
 
       const deltaPos = Math.abs(target - pos);
-      if(deltaPos <= 4) { return Promise.resolve(); }
+      if(deltaPos <= 1) { return Promise.resolve(); }
 
       //console.log(pos, deltaMs, ratio, ease.from, ease.to, range, target);
       return ease.servo.setPosition(target);
@@ -145,7 +145,9 @@ const servo4 = new CachedPositionServoProxy(new Servo(3, driver), 100);
 const servo5 = new CachedPositionServoProxy(new Servo(8, driver), 200);
 
 //const servo12 = new FeedbackServoProxy(new Servo(12, driver));
-//const servo13 = new FeedbackServoProxy(new Servo(13, driver));
+//const servo13 = new FeedbackServoProxy(new Servo(15, driver));
+const servo12 = new CachedPositionServoProxy(new Servo(12, driver), 200);
+const servo13 = new CachedPositionServoProxy(new Servo(15, driver), 200);
 
 
 driver.setPWMFreq(50).then(() => {
@@ -155,13 +157,15 @@ driver.setPWMFreq(50).then(() => {
     Easer.ease(servo4, { angle: 500, duration: 7, delay: 0 }),
     Easer.ease(servo5, { angle: 500, duration: 3, delay: 0 })
   ])
-  //.then(() => Easer.ease(servo0, { angle: 200, duration: 1, delay: 3 }))
-  //.then(() => Easer.ease(servo13, { angle: 400, duration: 1, delay: 0 }))
+  .then(() => Easer.ease(servo12, { angle: 400, duration: 5, delay: 0 }))
+  .then(() => Easer.ease(servo13, { angle: 400, duration: 5, delay: 0 }))
   .then(() => Promise.all([
     Easer.ease(servo0, { angle: 200, duration: 1, delay: 0, timing: 'ease' }),
     Easer.ease(servo1, { angle: 200, duration: 1, delay: 0, timing: 'ease' }),
     Easer.ease(servo4, { angle: 200, duration: 1, delay: 0, timing: 'ease' }),
-    Easer.ease(servo5, { angle: 200, duration: 1, delay: 0, timing: 'ease' })
+    Easer.ease(servo5, { angle: 200, duration: 1, delay: 0, timing: 'ease' }),
+    Easer.ease(servo12, { angle: 200, duration: 1, delay: 0, timing: 'ease' }),
+    Easer.ease(servo13, { angle: 200, duration: 1, delay: 0, timing: 'ease' })
   ]))
   .then(() => Easer.ease(servo0, { angle: 100, duration: 0.25, delay: 2 }))
   .then(() => Easer.ease(servo0, { angle: 500, duration: 0.25, delay: 0 }))
