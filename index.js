@@ -20,8 +20,8 @@ class FeedbackServoProxy {
     this._servo = servo;
   }
 
-  position() { }
-  setPosition(pos) { this._servo.setPosition(pos); }
+  position() { return Promise.resolve(0); }
+  setPosition(pos) { return this._servo.setPosition(pos); }
 }
 
 class CachedPositionServoProxy {
@@ -54,7 +54,7 @@ class Easer {
   }
 
   static startTimer() {
-    Easer.timer = setInterval(() => Easer.update(), 10);
+    Easer.timer = setInterval(() => Easer.update(), 50);
   }
 
   static inDelay(ease, nowMs) {
@@ -101,6 +101,9 @@ class Easer {
       const range = ease.to - ease.from;
       const target = ease.from + Math.round(range * ratio);
 
+      const deltaPos = Math.abs(target - pos);
+      if(deltaPos <= 4) { return Promise.resolve(); }
+
       //console.log(pos, deltaMs, ratio, ease.from, ease.to, range, target);
       return ease.servo.setPosition(target);
     });
@@ -135,17 +138,35 @@ Easer.easments = [];
 
 const driver = pwm({ address: 0x40, device: '/dev/i2c-1', debug: false });
 
-const servo1 = new CachedPositionServoProxy(new Servo(0, driver), 200);
-const servo2 = new CachedPositionServoProxy(new Servo(1, driver), 200);
+const servo0 = new CachedPositionServoProxy(new Servo(0, driver), 200);
+const servo1 = new CachedPositionServoProxy(new Servo(1, driver), 200);
+
+const servo4 = new CachedPositionServoProxy(new Servo(3, driver), 100);
+const servo5 = new CachedPositionServoProxy(new Servo(8, driver), 200);
+
+//const servo12 = new FeedbackServoProxy(new Servo(12, driver));
+//const servo13 = new FeedbackServoProxy(new Servo(13, driver));
+
 
 driver.setPWMFreq(50).then(() => {
-  Promise.all([
-    Easer.ease(servo1, { angle: 500, duration: 3, delay: 0, timing: 'ease' }),
-    Easer.ease(servo2, { angle: 500, duration: 9, delay: 0 })
+  return Promise.all([
+    Easer.ease(servo0, { angle: 500, duration: 3, delay: 0, timing: 'ease' }),
+    Easer.ease(servo1, { angle: 500, duration: 5, delay: 0 }),
+    Easer.ease(servo4, { angle: 500, duration: 7, delay: 0 }),
+    Easer.ease(servo5, { angle: 500, duration: 3, delay: 0 })
   ])
-  //.then(results => { console.log('phase 1 done' ); })
-  .then(() => Easer.ease(servo1, { angle: 200, duration: 1, delay: 3 }))
-  .then(() => Easer.ease(servo2, { angle: 200, duration: 1, delay: 0 }))
+  //.then(() => Easer.ease(servo0, { angle: 200, duration: 1, delay: 3 }))
+  //.then(() => Easer.ease(servo13, { angle: 400, duration: 1, delay: 0 }))
+  .then(() => Promise.all([
+    Easer.ease(servo0, { angle: 200, duration: 1, delay: 0, timing: 'ease' }),
+    Easer.ease(servo1, { angle: 200, duration: 1, delay: 0, timing: 'ease' }),
+    Easer.ease(servo4, { angle: 200, duration: 1, delay: 0, timing: 'ease' }),
+    Easer.ease(servo5, { angle: 200, duration: 1, delay: 0, timing: 'ease' })
+  ]))
+  .then(() => Easer.ease(servo0, { angle: 100, duration: 0.25, delay: 2 }))
+  .then(() => Easer.ease(servo0, { angle: 500, duration: 0.25, delay: 0 }))
+  .then(() => Easer.ease(servo0, { angle: 100, duration: 0.25, delay: 0 }))
+
 })
 .catch(e => { console.log('top level error', e); });
 
