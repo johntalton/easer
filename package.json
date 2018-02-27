@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "adafruit-i2c-pwm-driver": "^0.2.1"
+    "adafruit-i2c-pwm-driver": "^0.2.1",
+    "mqtt": "^2.15.3"
   }
 }

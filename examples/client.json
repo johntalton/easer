@@ -1,0 +1,29 @@
+{
+  "mqtt" : {
+    "url": null,
+    "reconnectMs": 1000,
+    "topic": "/CnC/pwm/+"
+  },
+  "buses": [
+    {
+      "name": "adafruit0",
+      "address": 64,
+      "device": "/dev/i2c-1",
+      "type": "adafruit pwm",
+      "servos": [
+        {
+          "id": 0
+        },
+        {
+          "id": 1
+        },
+
+        { "id": 3, "name": "armLeft" },
+        { "id": 8, "name": "armRight" },
+
+        { "id": 12, "name": "fingerLeft", "type": "feeback" },
+        { "id": 15, "name": "fingerRight", "type": "feeback" }
+      ]
+    }
+  ]
+}
