@@ -10,6 +10,13 @@ class Easer {
     }
 
     const ease = Easer.make(servo, options);
+
+    const superseded = Easer.easments.filter(ease => ease.servo === servo);
+    superseded.forEach(ghost => {
+      ghost.resolve(false);
+      Easer.easments.splice(Easer.easments.indexOf(ghost), 1);
+    });
+
     Easer.easments.push(ease);
 
     return ease.p;
@@ -95,6 +102,8 @@ class Easer {
   }
 }
 
+//if()
+console.log('init timer and easments value');
 Easer.timer = undefined;
 Easer.easments = [];
 
