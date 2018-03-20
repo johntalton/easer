@@ -88,7 +88,7 @@ class Mapper {
 
   resolve(selector) {
     if(selector.startsWith('#')) { return this._byid(selector.substr(1)); }
-    if(selector.startsWith('.')) { return this._bynane(selector.substr(1)); }
+    if(selector.startsWith('.')) { return this._byname(selector.substr(1)); }
     throw Error('unknown selector: ' + selector);
   }
 
