@@ -74,7 +74,7 @@ class Easer {
   static make(servo, options) {
     const nowMs = Date.now();
     const delayMs = options.delay * 1000;
-    const durationMs = options.duration * 1000;
+    const durationMs = options.durationMs !== undefined ? options.durationMs : (options.duration * 1000);
 
     let e = {
       servo: servo,
